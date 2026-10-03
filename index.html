@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資訊管理課程－科技接受度研究</title>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+window.mermaid = mermaid;
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'loose',
+  theme: 'base',
+  flowchart: { curve: 'basis', htmlLabels: true }
+});
+</script>
+<style>
+:root {
+  --bg:#f5f7fb;
+  --panel:#ffffff;
+  --text:#1f2937;
+  --muted:#667085;
+  --primary:#3458d4;
+  --primary-2:#e8edff;
+  --border:#d9e1ec;
+  --shadow:0 10px 28px rgba(16,24,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{overflow:hidden}
+.app{height:100vh;display:grid;grid-template-rows:118px 1fr}
+.topbar{
+  background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 72%, black));
+  color:white;display:flex;align-items:center;justify-content:space-between;padding:22px 28px;gap:20px
+}
+.title-wrap h1{margin:0;font-size:clamp(22px,3vw,36px);letter-spacing:.5px}
+.title-wrap p{margin:7px 0 0;opacity:.9;font-size:14px}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.control-group{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.13);padding:8px 10px;border-radius:12px}
+.control-group label{font-size:13px;opacity:.9}
+select,button{font:inherit}
+select{
+  border:1px solid rgba(255,255,255,.35);background:#fff;color:#111827;border-radius:9px;padding:7px 10px;outline:none
+}
+.main{display:grid;grid-template-columns:280px 1fr;min-height:0}
+.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:18px;overflow:auto}
+.sidebar h3{margin:4px 0 14px;font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.nav-btn{
+  width:100%;text-align:left;border:1px solid transparent;background:transparent;color:var(--text);
+  padding:13px 14px;border-radius:12px;margin-bottom:8px;cursor:pointer;font-weight:650;transition:.2s
+}
+.nav-btn:hover{background:var(--primary-2)}
+.nav-btn.active{background:var(--primary);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--primary) 28%, transparent)}
+.content{padding:22px;overflow:auto;min-width:0}
+.hero{
+  background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:18px
+}
+.hero h2{margin:0 0 8px;font-size:28px}
+.hero p{margin:0;color:var(--muted)}
+.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin:18px 0 10px}
+.toolbar input{
+  width:min(360px,100%);padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--text)
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+.card{
+  background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 5px 20px rgba(16,24,40,.05)
+}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:var(--primary);color:#fff;font-weight:800;margin-right:8px}
+.card h3{display:inline;font-size:19px}
+.card .en{display:block;color:var(--muted);font-size:13px;margin:8px 0}
+.tags{margin:10px 0 12px;padding:10px 12px;background:var(--primary-2);border-radius:10px;font-size:13px}
+.mermaid-box{overflow:auto;border:1px dashed var(--border);border-radius:12px;padding:10px;background:color-mix(in srgb,var(--panel) 94%, var(--primary-2))}
+.diagram-render svg{max-width:100%;height:auto;display:block;margin:auto}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--primary)}
+pre{white-space:pre-wrap;word-break:break-word;background:#111827;color:#e5e7eb;border-radius:10px;padding:12px;font-size:12px;overflow:auto}
+.empty{padding:50px;text-align:center;color:var(--muted)}
+.theme-dot{width:18px;height:18px;border-radius:50%;display:inline-block;border:2px solid rgba(255,255,255,.75)}
+@media(max-width:760px){
+  body{overflow:auto}
+  .app{height:auto;min-height:100vh;grid-template-rows:auto auto}
+  .topbar{align-items:flex-start;flex-direction:column}
+  .main{grid-template-columns:1fr}
+  .sidebar{border-right:none;border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .sidebar h3{grid-column:1/-1}
+  .nav-btn{margin:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="title-wrap">
+      <h1 id="pageTitle">資訊管理課程－科技接受度研究</h1>
+      <p id="pageSubtitle">從接受意圖、實際行為、滿意度、持續使用、行為改變到關鍵成功因素</p>
+    </div>
+    <div class="controls">
+      <div class="control-group">
+        <label id="themeLabel">色系</label>
+        <select id="themeSelect">
+          <option value="indigo">靛藍</option>
+          <option value="emerald">翡翠綠</option>
+          <option value="rose">玫瑰紅</option>
+          <option value="amber">琥珀金</option>
+          <option value="slate">石墨灰</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label id="langLabel">語言</label>
+        <select id="langSelect">
+          <option value="zh">繁體中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <h3 id="menuTitle">研究主題</h3>
+      <button class="nav-btn active" data-key="acceptance_intention"></button>
+      <button class="nav-btn" data-key="acceptance_behavior"></button>
+      <button class="nav-btn" data-key="satisfaction"></button>
+      <button class="nav-btn" data-key="continuance"></button>
+      <button class="nav-btn" data-key="behavior_change"></button>
+      <button class="nav-btn" data-key="csf"></button>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <h2 id="sectionTitle"></h2>
+        <p id="sectionIntro"></p>
+      </section>
+      <div class="toolbar">
+        <input id="searchBox" type="search" placeholder="搜尋模型或關鍵字">
+      </div>
+      <section id="cards" class="cards"></section>
+    </main>
+  </div>
+</div>
+
+<script>
+const DATA = {"acceptance_intention": {"zh": "接受度意圖", "en": "Acceptance Intention", "intro_zh": "探討使用者在實際使用前，是否願意接受、採用或開始使用某項科技。", "intro_en": "Examines whether users are willing to accept, adopt, or start using a technology before actual use.", "models": [["UTAUT2", "整合型科技接受與使用理論2", "Unified Theory of Acceptance and Use of Technology 2", "績效期望、努力期望、社會影響、促成條件、享樂動機、價格價值、習慣", "Performance expectancy, effort expectancy, social influence, facilitating conditions, hedonic motivation, price value, habit", "flowchart LR\nPE[績效期望] --> BI[接受意圖]\nEE[努力期望] --> BI\nSI[社會影響] --> BI\nFC[促成條件] --> BI\nHM[享樂動機] --> BI\nPV[價格價值] --> BI\nHT[習慣] --> BI\nBI --> UB[使用行為]"], ["UTAUT", "整合型科技接受與使用理論", "Unified Theory of Acceptance and Use of Technology", "績效期望、努力期望、社會影響、促成條件", "Performance expectancy, effort expectancy, social influence, facilitating conditions", "flowchart LR\nPE[績效期望] --> BI[行為意圖]\nEE[努力期望] --> BI\nSI[社會影響] --> BI\nBI --> UB[使用行為]\nFC[促成條件] --> UB"], ["TAM", "科技接受模型", "Technology Acceptance Model", "知覺有用性、知覺易用性、態度、使用意圖", "Perceived usefulness, perceived ease of use, attitude, behavioral intention", "flowchart LR\nPEOU[知覺易用性] --> PU[知覺有用性]\nPEOU --> ATT[使用態度]\nPU --> ATT\nPU --> BI[使用意圖]\nATT --> BI\nBI --> USE[實際使用]"], ["TAM2", "科技接受模型2", "Technology Acceptance Model 2", "主觀規範、形象、工作相關性、輸出品質、結果可展示性、知覺有用性", "Subjective norm, image, job relevance, output quality, result demonstrability, perceived usefulness", "flowchart LR\nSN[主觀規範] --> PU[知覺有用性]\nIMG[形象] --> PU\nJR[工作相關性] --> PU\nOQ[輸出品質] --> PU\nRD[結果可展示性] --> PU\nPU --> BI[使用意圖]"], ["TPB", "計畫行為理論", "Theory of Planned Behavior", "態度、主觀規範、知覺行為控制", "Attitude, subjective norm, perceived behavioral control", "flowchart LR\nATT[態度] --> BI[行為意圖]\nSN[主觀規範] --> BI\nPBC[知覺行為控制] --> BI\nPBC --> B[行為]\nBI --> B"], ["C-TAM-TPB", "TAM與TPB整合模型", "Combined TAM and TPB", "知覺有用性、態度、主觀規範、知覺行為控制", "Perceived usefulness, attitude, subjective norm, perceived behavioral control", "flowchart LR\nPU[知覺有用性] --> ATT[態度]\nATT --> BI[使用意圖]\nSN[主觀規範] --> BI\nPBC[知覺行為控制] --> BI\nBI --> USE[使用行為]"], ["DTPB", "分解式計畫行為理論", "Decomposed Theory of Planned Behavior", "相對優勢、相容性、複雜性、同儕影響、自我效能、促成條件", "Relative advantage, compatibility, complexity, peer influence, self-efficacy, facilitating conditions", "flowchart LR\nRA[相對優勢] --> ATT[態度]\nCOMP[相容性] --> ATT\nPI[同儕影響] --> SN[主觀規範]\nSE[自我效能] --> PBC[知覺行為控制]\nATT --> BI[接受意圖]\nSN --> BI\nPBC --> BI"], ["TRA", "理性行為理論", "Theory of Reasoned Action", "態度、主觀規範、行為意圖", "Attitude, subjective norm, behavioral intention", "flowchart LR\nATT[態度] --> BI[行為意圖]\nSN[主觀規範] --> BI\nBI --> B[行為]"], ["DOI/IDT", "創新擴散理論", "Diffusion of Innovations / Innovation Diffusion Theory", "相對優勢、相容性、複雜性、可試用性、可觀察性", "Relative advantage, compatibility, complexity, trialability, observability", "flowchart LR\nRA[相對優勢] --> AI[採用意圖]\nCOMP[相容性] --> AI\nCX[複雜性] --> AI\nTR[可試用性] --> AI\nOB[可觀察性] --> AI\nAI --> AD[採用]"], ["MM", "動機模型", "Motivational Model", "外在動機、內在動機", "Extrinsic motivation, intrinsic motivation", "flowchart LR\nEM[外在動機] --> BI[使用意圖]\nIM[內在動機] --> BI\nBI --> USE[使用行為]"]]}, "acceptance_behavior": {"zh": "接受度行為", "en": "Acceptance Behavior", "intro_zh": "聚焦使用者是否真正採用、使用與落實科技，而不只停留在意圖層次。", "intro_en": "Focuses on actual adoption and use behavior rather than intention alone.", "models": [["UTAUT", "整合型科技接受與使用理論", "Unified Theory of Acceptance and Use of Technology", "行為意圖、促成條件、實際使用", "Behavioral intention, facilitating conditions, actual use", "flowchart LR\nBI[行為意圖] --> UB[使用行為]\nFC[促成條件] --> UB"], ["TPB", "計畫行為理論", "Theory of Planned Behavior", "行為意圖、知覺行為控制、實際行為", "Behavioral intention, perceived behavioral control, behavior", "flowchart LR\nBI[行為意圖] --> B[實際行為]\nPBC[知覺行為控制] --> B"], ["TAM", "科技接受模型", "Technology Acceptance Model", "知覺有用性、態度、意圖、實際使用", "Perceived usefulness, attitude, intention, actual use", "flowchart LR\nPU[知覺有用性] --> BI[使用意圖]\nATT[態度] --> BI\nBI --> USE[實際使用]"], ["DOI", "創新擴散理論", "Diffusion of Innovations", "採用、試用、擴散、實際採用", "Adoption, trial, diffusion, actual adoption", "flowchart LR\nINNOV[創新特性] --> INT[採用意圖]\nINT --> ADOPT[實際採用]"], ["TTF", "任務－科技適配模型", "Task-Technology Fit", "任務特性、科技特性、適配度、使用績效", "Task characteristics, technology characteristics, fit, utilization", "flowchart LR\nTASK[任務特性] --> TTF[任務科技適配]\nTECH[科技特性] --> TTF\nTTF --> USE[實際使用]\nUSE --> PERF[績效]"], ["MPCU", "個人電腦使用模型", "Model of PC Utilization", "工作適配、複雜性、長期結果、情感、社會因素、促成條件", "Job fit, complexity, long-term consequences, affect, social factors, facilitating conditions", "flowchart LR\nJF[工作適配] --> USE[使用行為]\nCX[複雜性] --> USE\nSF[社會因素] --> USE\nFC[促成條件] --> USE"], ["SCT", "社會認知理論", "Social Cognitive Theory", "自我效能、環境、結果預期、行為", "Self-efficacy, environment, outcome expectations, behavior", "flowchart LR\nSE[自我效能] --> B[使用行為]\nENV[環境] --> B\nOE[結果預期] --> B"], ["Habit", "習慣模型", "Habit Model", "過去行為、習慣、自動化使用", "Past behavior, habit, automatic use", "flowchart LR\nPB[過去行為] --> H[習慣]\nH --> USE[實際使用]"], ["COM-B", "COM-B 行為模型", "Capability-Opportunity-Motivation-Behavior", "能力、機會、動機、行為", "Capability, opportunity, motivation, behavior", "flowchart LR\nC[能力] --> B[行為]\nO[機會] --> B\nM[動機] --> B"], ["IS Success", "資訊系統成功模型", "DeLone & McLean IS Success Model", "使用、使用者滿意度、淨效益", "Use, user satisfaction, net benefits", "flowchart LR\nQ[系統/資訊/服務品質] --> USE[使用]\nQ --> SAT[滿意度]\nUSE --> NB[淨效益]\nSAT --> NB"]]}, "satisfaction": {"zh": "滿意度", "en": "Satisfaction", "intro_zh": "探討使用者實際體驗後，期望是否被滿足，以及品質、價值與情緒如何影響滿意度。", "intro_en": "Examines whether post-use expectations are fulfilled and how quality, value, and affect shape satisfaction.", "models": [["ECM", "資訊系統持續使用期望確認模型", "Expectation-Confirmation Model of IS Continuance", "確認、知覺有用性、滿意度", "Confirmation, perceived usefulness, satisfaction", "flowchart LR\nCON[確認] --> PU[知覺有用性]\nCON --> SAT[滿意度]\nPU --> SAT"], ["ECT", "期望確認理論", "Expectation-Confirmation Theory", "期望、知覺績效、確認、不確認、滿意度", "Expectations, perceived performance, confirmation/disconfirmation, satisfaction", "flowchart LR\nEXP[期望] --> CON[確認/不確認]\nPERF[知覺績效] --> CON\nCON --> SAT[滿意度]"], ["IS Success", "資訊系統成功模型", "DeLone & McLean IS Success Model", "系統品質、資訊品質、服務品質、滿意度", "System quality, information quality, service quality, satisfaction", "flowchart LR\nSQ[系統品質] --> SAT[滿意度]\nIQ[資訊品質] --> SAT\nSVQ[服務品質] --> SAT"], ["SERVQUAL", "服務品質模型", "SERVQUAL", "有形性、可靠性、反應性、保證性、同理心", "Tangibles, reliability, responsiveness, assurance, empathy", "flowchart LR\nT[有形性] --> SQ[服務品質]\nR[可靠性] --> SQ\nRESP[反應性] --> SQ\nA[保證性] --> SQ\nE[同理心] --> SQ\nSQ --> SAT[滿意度]"], ["ACSI", "美國顧客滿意度指數模型", "American Customer Satisfaction Index", "顧客期望、知覺品質、知覺價值、滿意度、忠誠", "Customer expectations, perceived quality, perceived value, satisfaction, loyalty", "flowchart LR\nE[顧客期望] --> SAT[滿意度]\nQ[知覺品質] --> SAT\nV[知覺價值] --> SAT\nSAT --> L[忠誠]"], ["E-S-QUAL", "電子服務品質模型", "E-S-QUAL", "效率、履行、系統可用性、隱私", "Efficiency, fulfillment, system availability, privacy", "flowchart LR\nEFF[效率] --> SAT[滿意度]\nFUL[履行] --> SAT\nSYS[系統可用性] --> SAT\nPRI[隱私] --> SAT"], ["TAM + Satisfaction", "TAM延伸滿意度模型", "TAM with Satisfaction Extension", "有用性、易用性、滿意度", "Usefulness, ease of use, satisfaction", "flowchart LR\nPEOU[知覺易用性] --> PU[知覺有用性]\nPU --> SAT[滿意度]\nPEOU --> SAT"], ["Perceived Value", "知覺價值模型", "Perceived Value Model", "功能價值、情緒價值、社會價值、成本", "Functional, emotional, social value, cost", "flowchart LR\nFV[功能價值] --> PV[知覺價值]\nEV[情緒價值] --> PV\nSV[社會價值] --> PV\nCOST[成本] --> PV\nPV --> SAT[滿意度]"], ["Kano", "Kano 模型", "Kano Model", "基本需求、期望需求、魅力需求", "Must-be, performance, attractive attributes", "flowchart LR\nM[基本需求] --> SAT[滿意度]\nP[期望需求] --> SAT\nA[魅力需求] --> SAT"], ["TCT", "科技持續理論", "Technology Continuance Theory", "確認、有用性、易用性、態度、滿意度", "Confirmation, usefulness, ease of use, attitude, satisfaction", "flowchart LR\nCON[確認] --> PU[有用性]\nPEOU[易用性] --> ATT[態度]\nPU --> SAT[滿意度]\nCON --> SAT"]]}, "continuance": {"zh": "持續使用", "en": "Continuance Intention", "intro_zh": "聚焦使用者已經實際使用科技之後，為什麼還願意繼續使用。", "intro_en": "Focuses on why users continue using a technology after actual experience.", "models": [["ECM", "資訊系統持續使用期望確認模型", "Expectation-Confirmation Model of IS Continuance", "確認、知覺有用性、滿意度、持續使用意圖", "Confirmation, perceived usefulness, satisfaction, continuance intention", "flowchart LR\nCON[確認] --> PU[知覺有用性]\nCON --> SAT[滿意度]\nPU --> SAT\nPU --> CI[持續使用意圖]\nSAT --> CI"], ["TCT", "科技持續理論", "Technology Continuance Theory", "確認、有用性、易用性、態度、滿意度、持續使用", "Confirmation, usefulness, ease of use, attitude, satisfaction, continuance", "flowchart LR\nCON[確認] --> PU[有用性]\nPEOU[易用性] --> ATT[態度]\nPU --> SAT[滿意度]\nCON --> SAT\nATT --> CI[持續使用意圖]\nSAT --> CI"], ["EECM", "延伸期望確認模型", "Extended Expectation-Confirmation Model", "確認、有用性、易用性、享樂性、滿意度", "Confirmation, usefulness, ease of use, enjoyment, satisfaction", "flowchart LR\nCON[確認] --> PU[有用性]\nCON --> PEOU[易用性]\nCON --> ENJ[享樂性]\nPU --> SAT[滿意度]\nPEOU --> SAT\nENJ --> SAT\nSAT --> CI[持續使用意圖]"], ["Habit–IS", "習慣－資訊系統持續使用模型", "Habit–IS Continuance Model", "滿意度、持續意圖、習慣、過去使用", "Satisfaction, continuance intention, habit, past use", "flowchart LR\nSAT[滿意度] --> CI[持續使用意圖]\nPB[過去使用] --> H[習慣]\nH --> USE[持續使用]\nCI --> USE"], ["IS Success", "資訊系統成功模型", "DeLone & McLean IS Success Model", "系統品質、資訊品質、服務品質、滿意度、使用、淨效益", "System quality, information quality, service quality, satisfaction, use, net benefits", "flowchart LR\nQ[品質] --> SAT[滿意度]\nSAT --> CI[持續使用意圖]\nCI --> USE[持續使用]"], ["TAM", "科技接受模型－持續使用應用", "Technology Acceptance Model for Continuance", "知覺有用性、知覺易用性、態度、持續使用意圖", "Usefulness, ease of use, attitude, continuance intention", "flowchart LR\nPEOU[易用性] --> PU[有用性]\nPEOU --> ATT[態度]\nPU --> ATT\nATT --> CI[持續使用意圖]"], ["TTF", "任務－科技適配模型", "Task-Technology Fit", "任務特性、科技特性、適配、績效", "Task characteristics, technology characteristics, fit, performance", "flowchart LR\nTASK[任務特性] --> TTF[任務科技適配]\nTECH[科技特性] --> TTF\nTTF --> CI[持續使用意圖]"], ["UTAUT2", "整合型科技接受與使用理論2", "UTAUT2", "績效期望、努力期望、享樂動機、價格價值、習慣", "Performance expectancy, effort expectancy, hedonic motivation, price value, habit", "flowchart LR\nPE[績效期望] --> CI[持續使用意圖]\nEE[努力期望] --> CI\nHM[享樂動機] --> CI\nPV[價格價值] --> CI\nH[習慣] --> CI"], ["Flow", "心流理論", "Flow Theory", "挑戰、技能、享樂、專注、心流、持續使用", "Challenge, skill, enjoyment, concentration, flow, continuance", "flowchart LR\nCH[挑戰] --> F[心流]\nSK[技能] --> F\nENJ[享樂] --> F\nF --> SAT[滿意度]\nF --> CI[持續使用意圖]"], ["PPM", "推－拉－錨定模型", "Push-Pull-Mooring Model", "推力、拉力、錨定、持續/轉換意圖", "Push, pull, mooring, continuance/switching intention", "flowchart LR\nPUSH[推力] --> CI[持續/轉換意圖]\nPULL[拉力] --> CI\nMOOR[錨定] --> CI"]]}, "behavior_change": {"zh": "行為改變", "en": "Behavior Change", "intro_zh": "探討如何從意圖進一步促成真正的行動、改變並維持新行為。", "intro_en": "Examines how intentions are translated into action, behavior change, and sustained new behavior.", "models": [["COM-B", "COM-B 行為模型", "Capability–Opportunity–Motivation–Behavior", "能力、機會、動機、行為", "Capability, opportunity, motivation, behavior", "flowchart LR\nC[能力] --> B[行為]\nO[機會] --> B\nM[動機] --> B"], ["TTM", "跨理論行為改變模型", "Transtheoretical Model / Stages of Change", "無意圖、思考、準備、行動、維持", "Precontemplation, contemplation, preparation, action, maintenance", "flowchart LR\nP[無意圖期] --> C[思考期]\nC --> PR[準備期]\nPR --> A[行動期]\nA --> M[維持期]"], ["SCT", "社會認知理論", "Social Cognitive Theory", "自我效能、結果預期、環境、行為", "Self-efficacy, outcome expectations, environment, behavior", "flowchart LR\nSE[自我效能] --> B[行為改變]\nOE[結果預期] --> B\nENV[環境支持] --> B"], ["TPB", "計畫行為理論", "Theory of Planned Behavior", "態度、主觀規範、知覺行為控制、行為意圖", "Attitude, subjective norm, perceived behavioral control, intention", "flowchart LR\nATT[態度] --> INT[行為意圖]\nSN[主觀規範] --> INT\nPBC[知覺行為控制] --> INT\nINT --> B[行為]"], ["HBM", "健康信念模型", "Health Belief Model", "知覺威脅、效益、障礙、行動提示、自我效能", "Perceived threat, benefits, barriers, cues to action, self-efficacy", "flowchart LR\nTH[知覺威脅] --> B[行為改變]\nBEN[知覺效益] --> B\nBAR[知覺障礙] --> B\nCUE[行動提示] --> B\nSE[自我效能] --> B"], ["HAPA", "健康行動歷程取向", "Health Action Process Approach", "動機階段、行動計畫、自我效能、維持", "Motivational phase, action planning, self-efficacy, maintenance", "flowchart LR\nRISK[風險知覺] --> INT[行為意圖]\nOE[結果預期] --> INT\nINT --> PLAN[行動計畫]\nPLAN --> ACT[實際行動]\nACT --> MAINT[維持]"], ["PMT", "保護動機理論", "Protection Motivation Theory", "威脅評估、因應評估、保護動機", "Threat appraisal, coping appraisal, protection motivation", "flowchart LR\nTA[威脅評估] --> PM[保護動機]\nCA[因應評估] --> PM\nPM --> B[保護行為]"], ["SDT", "自我決定理論", "Self-Determination Theory", "自主、勝任、關係、內在動機", "Autonomy, competence, relatedness, intrinsic motivation", "flowchart LR\nA[自主] --> M[自主性動機]\nC[勝任] --> M\nR[關係] --> M\nM --> B[行為改變]"], ["FBM", "Fogg 行為模型", "Fogg Behavior Model", "動機、能力、提示", "Motivation, ability, prompt", "flowchart LR\nM[動機] --> B[行為]\nA[能力] --> B\nP[提示] --> B"], ["II", "執行意圖模型", "Implementation Intentions", "目標意圖、If–Then 計畫、情境線索、行動", "Goal intention, if-then plan, cue, action", "flowchart LR\nG[目標意圖] --> II[If X → Then Y]\nII --> CUE[情境線索]\nCUE --> ACT[自動啟動行動]"]]}, "csf": {"zh": "關鍵成功因素", "en": "Critical Success Factors", "intro_zh": "辨識科技、系統、專案或組織轉型成功時，最需要被管理與持續關注的關鍵條件。", "intro_en": "Identifies the critical conditions that must be managed for technology, systems, projects, or organizational transformation to succeed.", "models": [["CSF", "關鍵成功因素法", "Critical Success Factors", "少數必須持續被管理關注的關鍵領域", "A limited number of critical areas requiring sustained managerial attention", "flowchart LR\nOBJ[組織目標] --> CSF[辨識關鍵成功因素]\nCSF --> KPI[衡量指標 KPI]\nKPI --> SUC[成功績效]"], ["IS Success", "DeLone & McLean 資訊系統成功模型", "DeLone & McLean IS Success Model", "系統品質、資訊品質、服務品質、使用、滿意度、淨效益", "System quality, information quality, service quality, use, satisfaction, net benefits", "flowchart LR\nQ[系統/資訊/服務品質] --> USE[使用]\nQ --> SAT[滿意度]\nUSE --> NB[淨效益]\nSAT --> NB"], ["TOE", "科技－組織－環境框架", "Technology–Organization–Environment Framework", "科技、組織、環境", "Technology, organization, environment", "flowchart LR\nT[科技構面] --> S[導入成功]\nO[組織構面] --> S\nE[環境構面] --> S"], ["RBV", "資源基礎理論", "Resource-Based View", "有價值、稀缺、難模仿、可被組織利用", "Valuable, rare, inimitable, organized resources", "flowchart LR\nR[企業資源] --> V[有價值]\nV --> RR[稀缺]\nRR --> I[難模仿]\nI --> O[組織化]\nO --> CA[競爭優勢]"], ["DCT", "動態能力理論", "Dynamic Capabilities Theory", "感知、掌握、轉型/重構", "Sensing, seizing, transforming", "flowchart LR\nS[感知機會] --> SE[掌握機會]\nSE --> T[轉型/重構]\nT --> P[成功績效]"], ["TTF", "任務－科技適配模型", "Task–Technology Fit", "任務特性、科技特性、適配程度、績效", "Task characteristics, technology characteristics, fit, performance", "flowchart LR\nTASK[任務特性] --> TTF[任務科技適配]\nTECH[科技特性] --> TTF\nTTF --> P[成功績效]"], ["BSC", "平衡計分卡", "Balanced Scorecard", "財務、顧客、內部流程、學習與成長", "Financial, customer, internal process, learning and growth", "flowchart LR\nL[學習與成長] --> P[內部流程]\nP --> C[顧客]\nC --> F[財務]\nF --> S[整體成功]"], ["ORC", "組織準備度模型", "Organizational Readiness for Change", "改變承諾、改變效能、資源與能力", "Change commitment, change efficacy, resources and capabilities", "flowchart LR\nCC[改變承諾] --> OR[組織準備度]\nCE[改變效能] --> OR\nRES[資源/能力] --> OR\nOR --> IMP[成功實施]"], ["DOI", "創新擴散理論", "Diffusion of Innovations", "相對優勢、相容性、複雜性、可試用性、可觀察性", "Relative advantage, compatibility, complexity, trialability, observability", "flowchart LR\nRA[相對優勢] --> S[成功採用]\nCOMP[相容性] --> S\nCX[複雜性] --> S\nTR[可試用性] --> S\nOB[可觀察性] --> S"], ["Project CSF", "專案成功因素框架", "Project Critical Success Factors", "高階支持、明確目標、專案管理、團隊、溝通、使用者參與、資源", "Top management support, clear goals, project management, team, communication, user involvement, resources", "flowchart LR\nTM[高階主管支持] --> PS[專案成功]\nGOAL[明確目標] --> PS\nPM[專案管理] --> PS\nTEAM[團隊能力] --> PS\nUSER[使用者參與] --> PS"]]}};
+let currentKey = 'acceptance_intention';
+let currentLang = 'zh';
+let mermaidRenderSeq = 0;
+
+const THEMES = {
+  indigo: {primary:'#3458d4', primary2:'#e8edff', bg:'#f5f7fb'},
+  emerald: {primary:'#16866f', primary2:'#e4f7f1', bg:'#f4faf8'},
+  rose: {primary:'#c04467', primary2:'#fdebf1', bg:'#fff7fa'},
+  amber: {primary:'#b7791f', primary2:'#fff3d6', bg:'#fffbf2'},
+  slate: {primary:'#475569', primary2:'#e9eef3', bg:'#f6f8fa'}
+};
+
+const UI = {
+  zh: {
+    title:'資訊管理課程－科技接受度研究',
+    subtitle:'從接受意圖、實際行為、滿意度、持續使用、行為改變到關鍵成功因素',
+    theme:'色系', lang:'語言', menu:'研究主題',
+    search:'搜尋模型或關鍵字',
+    concepts:'核心構念', mermaid:'Mermaid 語法'
+  },
+  en: {
+    title:'Information Management Course – Technology Acceptance Research',
+    subtitle:'From acceptance intention and actual use to satisfaction, continuance, behavior change, and critical success factors',
+    theme:'Theme', lang:'Language', menu:'Research Topics',
+    search:'Search models or keywords',
+    concepts:'Core Constructs', mermaid:'Mermaid Syntax'
+  },
+  ja: {
+    title:'情報管理コース－技術受容研究',
+    subtitle:'受容意図、実利用、満足度、継続利用、行動変容から重要成功要因まで',
+    theme:'配色', lang:'言語', menu:'研究テーマ',
+    search:'モデルまたはキーワードを検索',
+    concepts:'主要構成概念', mermaid:'Mermaid 構文'
+  },
+  ko: {
+    title:'정보관리 과정－기술수용 연구',
+    subtitle:'수용의도, 실제사용, 만족도, 지속사용, 행동변화부터 핵심성공요인까지',
+    theme:'색상', lang:'언어', menu:'연구 주제',
+    search:'모델 또는 키워드 검색',
+    concepts:'핵심 구성개념', mermaid:'Mermaid 문법'
+  }
+};
+
+
+const LOCALE = {
+  ja: {
+    sections: {
+      acceptance_intention: ['受容意図','実際の利用前に、利用者が技術を受け入れ、採用し、使い始める意思があるかを検討します。'],
+      acceptance_behavior: ['受容行動','意図だけでなく、利用者が実際に技術を採用・使用・実践するかに焦点を当てます。'],
+      satisfaction: ['満足度','実際の利用体験後に期待が満たされたか、また品質・価値・感情が満足度にどう影響するかを検討します。'],
+      continuance: ['継続利用','技術を実際に利用した後、なぜ利用者が使い続けようとするのかに焦点を当てます。'],
+      behavior_change: ['行動変容','意図から実際の行動へ移行し、新しい行動を形成・維持する仕組みを検討します。'],
+      csf: ['重要成功要因','技術、システム、プロジェクト、組織変革を成功させるために管理すべき重要条件を特定します。']
+    },
+    models: {
+      'UTAUT2':['統合型技術受容・利用理論2','業績期待、努力期待、社会的影響、促進条件、快楽動機、価格価値、習慣'],
+      'UTAUT':['統合型技術受容・利用理論','業績期待、努力期待、社会的影響、促進条件'],
+      'TAM':['技術受容モデル','知覚有用性、知覚容易性、態度、利用意図'],
+      'TAM2':['技術受容モデル2','主観的規範、イメージ、職務関連性、アウトプット品質、結果の可視性、知覚有用性'],
+      'TPB':['計画的行動理論','態度、主観的規範、知覚行動制御'],
+      'C-TAM-TPB':['TAMとTPBの統合モデル','知覚有用性、態度、主観的規範、知覚行動制御'],
+      'DTPB':['分解型計画的行動理論','相対的優位性、適合性、複雑性、同僚影響、自己効力感、促進条件'],
+      'TRA':['合理的行為理論','態度、主観的規範、行動意図'],
+      'DOI/IDT':['イノベーション普及理論','相対的優位性、適合性、複雑性、試行可能性、観察可能性'],
+      'MM':['動機モデル','外発的動機、内発的動機'],
+      'DOI':['イノベーション普及理論','相対的優位性、適合性、複雑性、試行可能性、観察可能性'],
+      'TTF':['タスク・テクノロジー適合モデル','タスク特性、技術特性、適合度、利用／成果'],
+      'MPCU':['PC利用モデル','職務適合、複雑性、長期的結果、感情、社会的要因、促進条件'],
+      'SCT':['社会認知理論','自己効力感、環境、結果期待、行動'],
+      'Habit':['習慣モデル','過去行動、習慣、自動化された利用'],
+      'COM-B':['COM-B 行動モデル','能力、機会、動機、行動'],
+      'IS Success':['情報システム成功モデル','システム品質、情報品質、サービス品質、利用、満足度、純便益'],
+      'ECM':['情報システム継続利用の期待確認モデル','確認、知覚有用性、満足度、継続利用意図'],
+      'ECT':['期待確認理論','期待、知覚された成果、確認／不確認、満足度'],
+      'SERVQUAL':['サービス品質モデル','有形性、信頼性、応答性、保証性、共感性'],
+      'ACSI':['米国顧客満足度指数モデル','顧客期待、知覚品質、知覚価値、満足度、ロイヤルティ'],
+      'E-S-QUAL':['電子サービス品質モデル','効率性、履行、システム可用性、プライバシー'],
+      'TAM + Satisfaction':['TAM拡張満足度モデル','有用性、容易性、満足度'],
+      'Perceived Value':['知覚価値モデル','機能価値、感情価値、社会価値、コスト'],
+      'Kano':['Kanoモデル','当たり前品質、一元的品質、魅力品質'],
+      'TCT':['技術継続理論','確認、有用性、容易性、態度、満足度、継続利用'],
+      'EECM':['拡張期待確認モデル','確認、有用性、容易性、楽しさ、満足度'],
+      'Habit–IS':['習慣－情報システム継続利用モデル','満足度、継続意図、習慣、過去利用'],
+      'Flow':['フロー理論','挑戦、スキル、楽しさ、集中、フロー、継続利用'],
+      'PPM':['プッシュ・プル・ムーリングモデル','プッシュ、プル、ムーリング、継続／乗換意図'],
+      'TTM':['トランスセオレティカルモデル','前熟考、熟考、準備、行動、維持'],
+      'HBM':['健康信念モデル','知覚脅威、便益、障壁、行動のきっかけ、自己効力感'],
+      'HAPA':['健康行動プロセスアプローチ','動機段階、行動計画、自己効力感、維持'],
+      'PMT':['防護動機理論','脅威評価、対処評価、防護動機'],
+      'SDT':['自己決定理論','自律性、有能感、関係性、内発的動機'],
+      'FBM':['Fogg行動モデル','動機、能力、プロンプト'],
+      'II':['実行意図モデル','目標意図、If–Then計画、状況手がかり、行動'],
+      'CSF':['重要成功要因法','継続的に管理・監視すべき少数の重要領域'],
+      'RBV':['資源ベース理論','価値、希少性、模倣困難性、組織化'],
+      'DCT':['ダイナミック・ケイパビリティ理論','感知、捕捉、変革／再構成'],
+      'BSC':['バランスト・スコアカード','財務、顧客、内部プロセス、学習と成長'],
+      'ORC':['組織変革準備性モデル','変革コミットメント、変革効力感、資源と能力'],
+      'Project CSF':['プロジェクト成功要因フレームワーク','経営層支援、明確な目標、プロジェクト管理、チーム、コミュニケーション、ユーザー参加、資源']
+    }
+  },
+  ko: {
+    sections: {
+      acceptance_intention: ['수용의도','실제 사용 전에 사용자가 특정 기술을 받아들이고 채택하며 사용을 시작할 의향이 있는지 살펴봅니다.'],
+      acceptance_behavior: ['수용행동','의도에 그치지 않고 사용자가 실제로 기술을 채택하고 사용하며 실행하는지에 초점을 둡니다.'],
+      satisfaction: ['만족도','실제 사용 경험 이후 기대가 충족되었는지, 품질·가치·정서가 만족도에 어떻게 영향을 주는지 살펴봅니다.'],
+      continuance: ['지속사용','기술을 실제로 사용한 뒤 사용자가 왜 계속 사용하려 하는지에 초점을 둡니다.'],
+      behavior_change: ['행동변화','의도에서 실제 행동으로 이어지고 새로운 행동을 형성·유지하는 과정을 살펴봅니다.'],
+      csf: ['핵심성공요인','기술, 시스템, 프로젝트 또는 조직 전환의 성공을 위해 관리해야 할 핵심 조건을 식별합니다.']
+    },
+    models: {
+      'UTAUT2':['통합기술수용이론2','성과기대, 노력기대, 사회적 영향, 촉진조건, 쾌락동기, 가격가치, 습관'],
+      'UTAUT':['통합기술수용이론','성과기대, 노력기대, 사회적 영향, 촉진조건'],
+      'TAM':['기술수용모델','지각된 유용성, 지각된 사용용이성, 태도, 사용의도'],
+      'TAM2':['기술수용모델2','주관적 규범, 이미지, 직무 관련성, 산출물 품질, 결과 가시성, 지각된 유용성'],
+      'TPB':['계획행동이론','태도, 주관적 규범, 지각된 행동통제'],
+      'C-TAM-TPB':['TAM-TPB 통합모델','지각된 유용성, 태도, 주관적 규범, 지각된 행동통제'],
+      'DTPB':['분해된 계획행동이론','상대적 이점, 적합성, 복잡성, 동료 영향, 자기효능감, 촉진조건'],
+      'TRA':['합리적 행동이론','태도, 주관적 규범, 행동의도'],
+      'DOI/IDT':['혁신확산이론','상대적 이점, 적합성, 복잡성, 시험가능성, 관찰가능성'],
+      'MM':['동기모델','외재적 동기, 내재적 동기'],
+      'DOI':['혁신확산이론','상대적 이점, 적합성, 복잡성, 시험가능성, 관찰가능성'],
+      'TTF':['과업-기술 적합모델','과업특성, 기술특성, 적합도, 사용/성과'],
+      'MPCU':['PC 활용모델','직무적합, 복잡성, 장기결과, 정서, 사회적 요인, 촉진조건'],
+      'SCT':['사회인지이론','자기효능감, 환경, 결과기대, 행동'],
+      'Habit':['습관모델','과거행동, 습관, 자동화된 사용'],
+      'COM-B':['COM-B 행동모델','능력, 기회, 동기, 행동'],
+      'IS Success':['정보시스템 성공모델','시스템 품질, 정보 품질, 서비스 품질, 사용, 만족도, 순편익'],
+      'ECM':['정보시스템 지속사용 기대확인모델','확인, 지각된 유용성, 만족도, 지속사용의도'],
+      'ECT':['기대확인이론','기대, 지각된 성과, 확인/불확인, 만족도'],
+      'SERVQUAL':['서비스품질모델','유형성, 신뢰성, 반응성, 확신성, 공감성'],
+      'ACSI':['미국고객만족지수모델','고객 기대, 지각된 품질, 지각된 가치, 만족도, 충성도'],
+      'E-S-QUAL':['전자서비스품질모델','효율성, 이행, 시스템 가용성, 프라이버시'],
+      'TAM + Satisfaction':['TAM 확장 만족도 모델','유용성, 사용용이성, 만족도'],
+      'Perceived Value':['지각가치모델','기능가치, 정서가치, 사회가치, 비용'],
+      'Kano':['카노모델','당연품질, 일원적 품질, 매력품질'],
+      'TCT':['기술지속이론','확인, 유용성, 사용용이성, 태도, 만족도, 지속사용'],
+      'EECM':['확장 기대확인모델','확인, 유용성, 사용용이성, 즐거움, 만족도'],
+      'Habit–IS':['습관-정보시스템 지속사용모델','만족도, 지속의도, 습관, 과거사용'],
+      'Flow':['몰입이론','도전, 기술, 즐거움, 집중, 몰입, 지속사용'],
+      'PPM':['푸시-풀-무어링 모델','푸시, 풀, 무어링, 지속/전환의도'],
+      'TTM':['범이론적 행동변화모델','무관심, 숙고, 준비, 행동, 유지'],
+      'HBM':['건강신념모델','지각된 위협, 편익, 장애, 행동단서, 자기효능감'],
+      'HAPA':['건강행동과정접근','동기단계, 행동계획, 자기효능감, 유지'],
+      'PMT':['보호동기이론','위협평가, 대처평가, 보호동기'],
+      'SDT':['자기결정이론','자율성, 유능감, 관계성, 내재동기'],
+      'FBM':['포그 행동모델','동기, 능력, 프롬프트'],
+      'II':['실행의도모델','목표의도, If–Then 계획, 상황단서, 행동'],
+      'CSF':['핵심성공요인법','지속적으로 관리·관찰해야 하는 소수의 핵심 영역'],
+      'RBV':['자원기반관점','가치, 희소성, 모방곤란성, 조직화'],
+      'DCT':['동적역량이론','감지, 포착, 전환/재구성'],
+      'BSC':['균형성과표','재무, 고객, 내부프로세스, 학습과 성장'],
+      'ORC':['조직변화 준비도 모델','변화몰입, 변화효능감, 자원과 역량'],
+      'Project CSF':['프로젝트 성공요인 프레임워크','최고경영진 지원, 명확한 목표, 프로젝트 관리, 팀, 커뮤니케이션, 사용자 참여, 자원']
+    }
+  }
+};
+
+function applyTheme(name){
+  const t = THEMES[name];
+  document.documentElement.style.setProperty('--primary', t.primary);
+  document.documentElement.style.setProperty('--primary-2', t.primary2);
+  document.documentElement.style.setProperty('--bg', t.bg);
+}
+
+function updateStaticUI(){
+  const ui = UI[currentLang];
+  document.getElementById('pageTitle').textContent = ui.title;
+  document.getElementById('pageSubtitle').textContent = ui.subtitle;
+  document.getElementById('themeLabel').textContent = ui.theme;
+  document.getElementById('langLabel').textContent = ui.lang;
+  document.getElementById('menuTitle').textContent = ui.menu;
+  document.getElementById('searchBox').placeholder = ui.search;
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const key = btn.dataset.key;
+    const item = DATA[key];
+    if(currentLang === 'zh') btn.textContent = item.zh;
+    else if(currentLang === 'en') btn.textContent = item.en;
+    else btn.textContent = LOCALE[currentLang].sections[key][0];
+  });
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+
+const MERMAID_TERM_MAP = {
+  en: {
+    '績效期望':'Performance Expectancy','接受意圖':'Acceptance Intention','努力期望':'Effort Expectancy',
+    '社會影響':'Social Influence','促成條件':'Facilitating Conditions','享樂動機':'Hedonic Motivation',
+    '價格價值':'Price Value','習慣':'Habit','使用行為':'Use Behavior','行為意圖':'Behavioral Intention',
+    '知覺易用性':'Perceived Ease of Use','知覺有用性':'Perceived Usefulness','使用態度':'Attitude Toward Use',
+    '實際使用':'Actual Use','主觀規範':'Subjective Norm','形象':'Image','工作相關性':'Job Relevance',
+    '輸出品質':'Output Quality','結果可展示性':'Result Demonstrability','態度':'Attitude',
+    '知覺行為控制':'Perceived Behavioral Control','行為':'Behavior','相對優勢':'Relative Advantage',
+    '相容性':'Compatibility','同儕影響':'Peer Influence','自我效能':'Self-Efficacy',
+    '採用意圖':'Adoption Intention','複雜性':'Complexity','可試用性':'Trialability','可觀察性':'Observability',
+    '採用':'Adoption','外在動機':'Extrinsic Motivation','內在動機':'Intrinsic Motivation',
+    '實際行為':'Actual Behavior','任務特性':'Task Characteristics','科技特性':'Technology Characteristics',
+    '任務科技適配':'Task-Technology Fit','績效':'Performance','工作適配':'Job Fit','社會因素':'Social Factors',
+    '環境':'Environment','結果預期':'Outcome Expectations','過去行為':'Past Behavior',
+    '系統/資訊/服務品質':'System / Information / Service Quality','滿意度':'Satisfaction','淨效益':'Net Benefits',
+    '確認':'Confirmation','期望':'Expectation','知覺績效':'Perceived Performance','確認/不確認':'Confirmation/Disconfirmation',
+    '有形性':'Tangibles','服務品質':'Service Quality','可靠性':'Reliability','反應性':'Responsiveness',
+    '保證性':'Assurance','同理心':'Empathy','顧客期望':'Customer Expectations','知覺品質':'Perceived Quality',
+    '知覺價值':'Perceived Value','忠誠':'Loyalty','效率':'Efficiency','履行':'Fulfillment',
+    '系統可用性':'System Availability','隱私':'Privacy','有用性':'Usefulness','易用性':'Ease of Use',
+    '功能價值':'Functional Value','情緒價值':'Emotional Value','社會價值':'Social Value','成本':'Cost',
+    '基本需求':'Must-be Requirements','期望需求':'Performance Requirements','魅力需求':'Attractive Requirements',
+    '持續使用意圖':'Continuance Intention','享樂性':'Enjoyment','過去使用':'Past Use','持續使用':'Continuance Use',
+    '品質':'Quality','挑戰':'Challenge','技能':'Skill','享樂':'Enjoyment','心流':'Flow',
+    '推力':'Push','拉力':'Pull','錨定':'Mooring','持續/轉換意圖':'Continuance / Switching Intention',
+    '能力':'Capability','機會':'Opportunity','動機':'Motivation','無意圖期':'Precontemplation',
+    '思考期':'Contemplation','準備期':'Preparation','行動期':'Action','維持期':'Maintenance',
+    '行為改變':'Behavior Change','環境支持':'Environmental Support','知覺威脅':'Perceived Threat',
+    '知覺效益':'Perceived Benefits','知覺障礙':'Perceived Barriers','行動提示':'Cues to Action',
+    '風險知覺':'Risk Perception','行動計畫':'Action Planning','維持':'Maintenance','威脅評估':'Threat Appraisal',
+    '因應評估':'Coping Appraisal','保護動機':'Protection Motivation','保護行為':'Protective Behavior',
+    '自主':'Autonomy','勝任':'Competence','關係':'Relatedness','自主性動機':'Autonomous Motivation',
+    '提示':'Prompt','目標意圖':'Goal Intention','情境線索':'Situational Cue','自動啟動行動':'Automatic Action',
+    '組織目標':'Organizational Objectives','辨識關鍵成功因素':'Identify Critical Success Factors',
+    '衡量指標 KPI':'Measures / KPI','成功績效':'Success Performance','科技構面':'Technology',
+    '組織構面':'Organization','環境構面':'Environment','導入成功':'Implementation Success',
+    '企業資源':'Firm Resources','有價值':'Valuable','稀缺':'Rare','難模仿':'Inimitable','組織化':'Organized',
+    '競爭優勢':'Competitive Advantage','感知機會':'Sensing','掌握機會':'Seizing','轉型/重構':'Transforming',
+    '學習與成長':'Learning & Growth','內部流程':'Internal Processes','顧客':'Customer','財務':'Financial',
+    '整體成功':'Overall Success','改變承諾':'Change Commitment','改變效能':'Change Efficacy',
+    '資源/能力':'Resources / Capabilities','組織準備度':'Organizational Readiness','成功實施':'Successful Implementation',
+    '成功採用':'Successful Adoption','高階主管支持':'Top Management Support','明確目標':'Clear Goals',
+    '專案管理':'Project Management','團隊能力':'Team Capability','使用者參與':'User Involvement','專案成功':'Project Success'
+  },
+  ja: {
+    '績效期望':'業績期待','接受意圖':'受容意図','努力期望':'努力期待','社會影響':'社会的影響',
+    '促成條件':'促進条件','享樂動機':'快楽動機','價格價值':'価格価値','習慣':'習慣','使用行為':'利用行動',
+    '行為意圖':'行動意図','知覺易用性':'知覚容易性','知覺有用性':'知覚有用性','使用態度':'利用態度',
+    '實際使用':'実際利用','主觀規範':'主観的規範','形象':'イメージ','工作相關性':'職務関連性',
+    '輸出品質':'アウトプット品質','結果可展示性':'結果の可視性','態度':'態度','知覺行為控制':'知覚行動制御',
+    '行為':'行動','相對優勢':'相対的優位性','相容性':'適合性','同儕影響':'同僚の影響','自我效能':'自己効力感',
+    '採用意圖':'採用意図','複雜性':'複雑性','可試用性':'試行可能性','可觀察性':'観察可能性','採用':'採用',
+    '外在動機':'外発的動機','內在動機':'内発的動機','實際行為':'実際行動','任務特性':'タスク特性',
+    '科技特性':'技術特性','任務科技適配':'タスク・テクノロジー適合','績效':'成果','工作適配':'職務適合',
+    '社會因素':'社会的要因','環境':'環境','結果預期':'結果期待','過去行為':'過去行動',
+    '系統/資訊/服務品質':'システム／情報／サービス品質','滿意度':'満足度','淨效益':'純便益',
+    '確認':'確認','期望':'期待','知覺績效':'知覚成果','確認/不確認':'確認／不確認','有形性':'有形性',
+    '服務品質':'サービス品質','可靠性':'信頼性','反應性':'応答性','保證性':'保証性','同理心':'共感性',
+    '顧客期望':'顧客期待','知覺品質':'知覚品質','知覺價值':'知覚価値','忠誠':'ロイヤルティ',
+    '效率':'効率性','履行':'履行','系統可用性':'システム可用性','隱私':'プライバシー',
+    '有用性':'有用性','易用性':'容易性','功能價值':'機能価値','情緒價值':'感情価値','社會價值':'社会価値',
+    '成本':'コスト','基本需求':'当たり前品質','期望需求':'一元的品質','魅力需求':'魅力品質',
+    '持續使用意圖':'継続利用意図','享樂性':'楽しさ','過去使用':'過去利用','持續使用':'継続利用',
+    '品質':'品質','挑戰':'挑戦','技能':'スキル','享樂':'楽しさ','心流':'フロー',
+    '推力':'プッシュ','拉力':'プル','錨定':'ムーリング','持續/轉換意圖':'継続／乗換意図',
+    '能力':'能力','機會':'機会','動機':'動機','無意圖期':'前熟考期','思考期':'熟考期',
+    '準備期':'準備期','行動期':'行動期','維持期':'維持期','行為改變':'行動変容',
+    '環境支持':'環境支援','知覺威脅':'知覚脅威','知覺效益':'知覚便益','知覺障礙':'知覚障壁',
+    '行動提示':'行動のきっかけ','風險知覺':'リスク知覚','行動計畫':'行動計画','維持':'維持',
+    '威脅評估':'脅威評価','因應評估':'対処評価','保護動機':'防護動機','保護行為':'防護行動',
+    '自主':'自律性','勝任':'有能感','關係':'関係性','自主性動機':'自律的動機','提示':'プロンプト',
+    '目標意圖':'目標意図','情境線索':'状況手がかり','自動啟動行動':'自動的行動',
+    '組織目標':'組織目標','辨識關鍵成功因素':'重要成功要因の特定','衡量指標 KPI':'測定指標 KPI',
+    '成功績效':'成功成果','科技構面':'技術','組織構面':'組織','環境構面':'環境','導入成功':'導入成功',
+    '企業資源':'企業資源','有價值':'価値あり','稀缺':'希少','難模仿':'模倣困難','組織化':'組織化',
+    '競爭優勢':'競争優位','感知機會':'感知','掌握機會':'捕捉','轉型/重構':'変革／再構成',
+    '學習與成長':'学習と成長','內部流程':'内部プロセス','顧客':'顧客','財務':'財務','整體成功':'総合的成功',
+    '改變承諾':'変革コミットメント','改變效能':'変革効力感','資源/能力':'資源／能力',
+    '組織準備度':'組織準備性','成功實施':'成功実施','成功採用':'成功採用','高階主管支持':'経営層支援',
+    '明確目標':'明確な目標','專案管理':'プロジェクト管理','團隊能力':'チーム能力',
+    '使用者參與':'ユーザー参加','專案成功':'プロジェクト成功'
+  },
+  ko: {
+    '績效期望':'성과기대','接受意圖':'수용의도','努力期望':'노력기대','社會影響':'사회적 영향',
+    '促成條件':'촉진조건','享樂動機':'쾌락동기','價格價值':'가격가치','習慣':'습관','使用行為':'사용행동',
+    '行為意圖':'행동의도','知覺易用性':'지각된 사용용이성','知覺有用性':'지각된 유용성','使用態度':'사용태도',
+    '實際使用':'실제사용','主觀規範':'주관적 규범','形象':'이미지','工作相關性':'직무 관련성',
+    '輸出品質':'산출물 품질','結果可展示性':'결과 가시성','態度':'태도','知覺行為控制':'지각된 행동통제',
+    '行為':'행동','相對優勢':'상대적 이점','相容性':'적합성','同儕影響':'동료 영향','自我效能':'자기효능감',
+    '採用意圖':'채택의도','複雜性':'복잡성','可試用性':'시험가능성','可觀察性':'관찰가능성','採用':'채택',
+    '外在動機':'외재적 동기','內在動機':'내재적 동기','實際行為':'실제행동','任務特性':'과업특성',
+    '科技特性':'기술특성','任務科技適配':'과업-기술 적합','績效':'성과','工作適配':'직무적합',
+    '社會因素':'사회적 요인','環境':'환경','結果預期':'결과기대','過去行為':'과거행동',
+    '系統/資訊/服務品質':'시스템/정보/서비스 품질','滿意度':'만족도','淨效益':'순편익',
+    '確認':'확인','期望':'기대','知覺績效':'지각된 성과','確認/不確認':'확인/불확인','有形性':'유형성',
+    '服務品質':'서비스 품질','可靠性':'신뢰성','反應性':'반응성','保證性':'확신성','同理心':'공감성',
+    '顧客期望':'고객 기대','知覺品質':'지각된 품질','知覺價值':'지각된 가치','忠誠':'충성도',
+    '效率':'효율성','履行':'이행','系統可用性':'시스템 가용성','隱私':'프라이버시',
+    '有用性':'유용성','易用性':'사용용이성','功能價值':'기능가치','情緒價值':'정서가치','社會價值':'사회가치',
+    '成本':'비용','基本需求':'당연품질','期望需求':'일원적 품질','魅力需求':'매력품질',
+    '持續使用意圖':'지속사용의도','享樂性':'즐거움','過去使用':'과거사용','持續使用':'지속사용',
+    '品質':'품질','挑戰':'도전','技能':'기술','享樂':'즐거움','心流':'몰입',
+    '推力':'푸시','拉力':'풀','錨定':'무어링','持續/轉換意圖':'지속/전환의도',
+    '能力':'능력','機會':'기회','動機':'동기','無意圖期':'무관심단계','思考期':'숙고단계',
+    '準備期':'준비단계','行動期':'행동단계','維持期':'유지단계','行為改變':'행동변화',
+    '環境支持':'환경지원','知覺威脅':'지각된 위협','知覺效益':'지각된 편익','知覺障礙':'지각된 장애',
+    '行動提示':'행동단서','風險知覺':'위험지각','行動計畫':'행동계획','維持':'유지',
+    '威脅評估':'위협평가','因應評估':'대처평가','保護動機':'보호동기','保護行為':'보호행동',
+    '自主':'자율성','勝任':'유능감','關係':'관계성','自主性動機':'자율적 동기','提示':'프롬프트',
+    '目標意圖':'목표의도','情境線索':'상황단서','自動啟動行動':'자동행동',
+    '組織目標':'조직목표','辨識關鍵成功因素':'핵심성공요인 식별','衡量指標 KPI':'측정지표 KPI',
+    '成功績效':'성공성과','科技構面':'기술','組織構面':'조직','環境構面':'환경','導入成功':'도입성공',
+    '企業資源':'기업자원','有價值':'가치 있음','稀缺':'희소','難模仿':'모방곤란','組織化':'조직화',
+    '競爭優勢':'경쟁우위','感知機會':'감지','掌握機會':'포착','轉型/重構':'전환/재구성',
+    '學習與成長':'학습과 성장','內部流程':'내부프로세스','顧客':'고객','財務':'재무','整體成功':'전체 성공',
+    '改變承諾':'변화몰입','改變效能':'변화효능감','資源/能力':'자원/역량',
+    '組織準備度':'조직 준비도','成功實施':'성공적 실행','成功採用':'성공적 채택','高階主管支持':'최고경영진 지원',
+    '明確目標':'명확한 목표','專案管理':'프로젝트 관리','團隊能力':'팀 역량',
+    '使用者參與':'사용자 참여','專案成功':'프로젝트 성공'
+  }
+};
+
+function localizeMermaid(code, lang){
+  if(lang === 'zh') return code;
+  const map = MERMAID_TERM_MAP[lang];
+  if(!map) return code;
+  let out = code;
+  Object.keys(map)
+    .sort((a,b)=>b.length-a.length)
+    .forEach(k => { out = out.split(k).join(map[k]); });
+  return out;
+}
+
+async function render(){
+  const section = DATA[currentKey];
+  if(currentLang === 'zh'){
+    document.getElementById('sectionTitle').textContent = section.zh;
+    document.getElementById('sectionIntro').textContent = section.intro_zh;
+  } else if(currentLang === 'en'){
+    document.getElementById('sectionTitle').textContent = section.en;
+    document.getElementById('sectionIntro').textContent = section.intro_en;
+  } else {
+    document.getElementById('sectionTitle').textContent = LOCALE[currentLang].sections[currentKey][0];
+    document.getElementById('sectionIntro').textContent = LOCALE[currentLang].sections[currentKey][1];
+  }
+
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const models = section.models.filter(m => {
+    const hay = m.join(' ').toLowerCase();
+    return !q || hay.includes(q);
+  });
+
+  const cards = document.getElementById('cards');
+  cards.innerHTML = '';
+  const ui = UI[currentLang];
+
+  models.forEach((m,i)=>{
+    const [abbr, zh, en, constructs_zh, constructs_en, mer] = m;
+    const localizedMer = localizeMermaid(mer, currentLang);
+    let title, sub, constructs;
+    if(currentLang==='zh'){
+      title = zh; sub = en; constructs = constructs_zh;
+    } else if(currentLang==='en'){
+      title = en; sub = zh; constructs = constructs_en;
+    } else {
+      const loc = LOCALE[currentLang].models[abbr];
+      title = loc ? loc[0] : en;
+      sub = en;
+      constructs = loc ? loc[1] : constructs_en;
+    }
+
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div><span class="rank">${i+1}</span><h3>${esc(abbr)} · ${esc(title)}</h3></div>
+      <span class="en">${esc(sub)}</span>
+      <div class="tags"><strong>${ui.concepts}：</strong>${esc(constructs)}</div>
+      <div class="mermaid-box">
+        <div class="diagram-render" data-code="${encodeURIComponent(localizedMer)}"></div>
+      </div>
+      <details>
+        <summary>${ui.mermaid}</summary>
+        <pre><code>${esc(localizedMer)}</code></pre>
+      </details>`;
+    cards.appendChild(card);
+  });
+
+  if(window.mermaid){
+    const seq = ++mermaidRenderSeq;
+    const nodes = [...document.querySelectorAll('.diagram-render')];
+    for(let i=0;i<nodes.length;i++){
+      const node = nodes[i];
+      const code = decodeURIComponent(node.dataset.code || '');
+      try{
+        const id = `mmd-${currentLang}-${seq}-${i}`;
+        const result = await window.mermaid.render(id, code);
+        // If the user switched language again while this diagram was rendering,
+        // do not inject an outdated SVG.
+        if(seq !== mermaidRenderSeq) return;
+        node.innerHTML = result.svg;
+        if(result.bindFunctions) result.bindFunctions(node);
+      }catch(e){
+        node.innerHTML = `<pre style="margin:0;color:#b42318">${esc(code)}</pre>`;
+        console.warn('Mermaid render error:', e);
+      }
+    }
+  }
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    currentKey = btn.dataset.key;
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.getElementById('searchBox').value='';
+    await render();
+  });
+});
+
+document.getElementById('langSelect').addEventListener('change', async e=>{
+  currentLang = e.target.value;
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-Hant' : currentLang;
+  mermaidRenderSeq++;
+  document.getElementById('cards').innerHTML = '';
+  updateStaticUI();
+  await render();
+});
+
+document.getElementById('themeSelect').addEventListener('change', e=>applyTheme(e.target.value));
+document.getElementById('searchBox').addEventListener('input', render);
+
+applyTheme('indigo');
+updateStaticUI();
+window.addEventListener('load', render);
+</script>
+</body>
+</html>

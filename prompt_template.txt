@@ -1,0 +1,152 @@
+【互動式多語系研究網站－可重複使用 Prompt】
+
+請建立一個可直接部署到 GitHub Pages 的互動式研究網站，最後輸出單一 index.html，並一併建立 README.md。
+
+【網站版面】
+分成三個區塊：
+
+1. 上方 Header
+2. 左下導覽選單
+3. 右下動態內容區
+
+【Header】
+放入：
+- 主標題：〔請填網站名稱〕
+- 副標題：〔請填副標題〕
+- 色系切換
+- 語言切換
+
+語言至少包含：
+- 繁體中文
+- English
+- 日本語
+- 한국어
+
+色系至少包含：
+- 靛藍
+- 翡翠綠
+- 玫瑰紅
+- 琥珀金
+- 石墨灰
+
+【左側導覽】
+主題如下：
+〔請列出研究主題〕
+
+點擊不同主題後，右側內容必須立即更新。
+
+【右側內容】
+每個主題顯示：
+
+1. 主題名稱
+2. 主題說明
+3. 搜尋框
+4. Top 10 模型／理論／框架
+
+每個模型卡片包含：
+- 排名
+- 模型縮寫
+- 模型名稱
+- 英文正式名稱
+- 核心構念
+- Mermaid 模型圖
+- 可展開的 Mermaid 原始語法
+
+【多語系】
+切換語言時，以下全部同步切換：
+
+- 網站標題
+- 副標題
+- 操作標籤
+- 左側選單
+- 主題名稱
+- 主題說明
+- 搜尋提示
+- 模型名稱
+- 核心構念
+- Mermaid 原始語法
+- Mermaid 實際渲染 SVG 圖形節點文字
+
+注意：
+不能只改 Mermaid Source。
+
+切換語言時必須：
+
+1. 重新產生該語言 Mermaid 語法
+2. 清除原本 SVG
+3. 呼叫 mermaid.render()
+4. 重新插入 SVG
+5. 使用 Render Sequence 防止舊的非同步 Render 覆蓋新語言
+
+建議 Mermaid ID：
+
+mmd-${currentLang}-${renderSequence}-${index}
+
+【Mermaid】
+使用 Mermaid 11 CDN。
+
+設定：
+
+startOnLoad: false
+securityLevel: loose
+theme: base
+htmlLabels: true
+
+模型結構不因語言而改變，只翻譯節點文字。
+
+【搜尋】
+搜尋範圍至少包含：
+
+- 模型縮寫
+- 中文名稱
+- English
+- 日本語
+- 한국어
+- 核心構念
+
+【響應式】
+桌面：
+Header + 左側導覽 + 右側內容
+
+手機：
+Header → 導覽 → 內容
+
+【GitHub Pages】
+輸出結構：
+
+index.html
+README.md
+SKILL.md
+prompt_template.txt
+.nojekyll
+
+首頁一定命名為：
+
+index.html
+
+【技術】
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Mermaid 11
+- 不需要後端
+- UTF-8
+- 所有核心互動集中於 index.html
+
+【設計】
+風格：
+- 專業
+- 適合研究及課堂展示
+- 卡片化
+- 清楚易讀
+- 不過度花俏
+- Mermaid 自動縮放及置中
+
+【完成後】
+請提供：
+1. GitHub-ready 資料夾
+2. 可直接上傳的 ZIP
+3. README.md
+4. SKILL.md
+5. Prompt 範本
+6. Skill ZIP
